@@ -1,5 +1,5 @@
 import type { Admin, Receipt, Language, ExpenseItem } from '../../types';
-import { translations } from '../../constants';
+import { translations } from '../../services/lib/constants';
 import { getAdmin } from './db';
 import { NotoSansGujarati } from '../../assets/NotoSansGujarati';
 import { NotoSansDevanagari } from '../../assets/NotoSansDevanagari';

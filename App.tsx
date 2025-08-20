@@ -4,7 +4,7 @@ import LoginPage from './components/LoginPage';
 import Dashboard from './components/Dashboard';
 import { initDB, getAuthStatus } from './components/services/db';
 import type { Language } from './types';
-import { translations } from './constants';
+import { translations } from './services/lib/constants';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);

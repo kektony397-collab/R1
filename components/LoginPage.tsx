@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Language } from '../types';
-import { translations } from '../constants';
+import { translations } from '../services/lib/constants';
 import { setupAdmin, verifyPassword, verifyPin } from './services/db';
 import PinPad from './PinPad';
 

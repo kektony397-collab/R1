@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Language, Receipt } from '../types';
-import { translations } from '../constants';
+import { translations } from '../services/lib/constants';
 import { addReceipt, getReceipts } from './services/db';
 import { generateReceiptPDF, exportAllReceiptsPDF, exportAllReceiptsExcel } from './services/exportService';
 import { dispatchDataChangedEvent } from '../services/lib/events';

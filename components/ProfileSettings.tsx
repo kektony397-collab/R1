@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 import type { Language, Admin } from '../types';
-import { translations } from '../constants';
+import { translations } from '../services/lib/constants';
 import { getAdmin, updateAdmin, updatePassword, updatePin } from './services/db';
 
 const ProfileSettings: React.FC<{ language: Language }> = ({ language }) => {

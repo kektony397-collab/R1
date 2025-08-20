@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Language, ExpenseItem } from '../types';
-import { translations } from '../constants';
+import { translations } from '../services/lib/constants';
 import { generateExpensePDF } from './services/exportService';
 import { addExpenseReport } from './services/db';
 import { dispatchDataChangedEvent } from '../services/lib/events';

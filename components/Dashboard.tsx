@@ -4,7 +4,7 @@ import ReceiptsManager from './ReceiptsManager';
 import ExpenseCalculator from './ExpenseCalculator';
 import ProfileSettings from './ProfileSettings';
 import type { Language } from '../types';
-import { translations } from '../constants';
+import { translations } from '../services/lib/constants';
 
 interface DashboardProps {
   onLogout: () => void;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Language } from '../types';
-import { translations } from '../constants';
+import { translations } from '../services/lib/constants';
 import { getReceipts, getExpenseReports } from './services/db';
 import { DATA_CHANGED_EVENT } from '../services/lib/events';
 
