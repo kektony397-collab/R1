@@ -1,4 +1,5 @@
-import type { Translation } from './types';
+
+import type { Translation } from '../../types';
 
 export const translations: { [key: string]: Translation } = {
   en: {

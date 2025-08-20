@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import LoginPage from './components/LoginPage';
 import Dashboard from './components/Dashboard';
-import { initDB, getAuthStatus } from './components/services/db';
+import { initDB, getAuthStatus } from './services/db';
 import type { Language } from './types';
 import { translations } from './services/lib/constants';
 

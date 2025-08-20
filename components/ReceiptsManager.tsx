@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Language, Receipt } from '../types';
 import { translations } from '../services/lib/constants';
-import { addReceipt, getReceipts } from './services/db';
-import { generateReceiptPDF, exportAllReceiptsPDF, exportAllReceiptsExcel } from './services/exportService';
+import { addReceipt, getReceipts } from '../services/db';
+import { generateReceiptPDF, exportAllReceiptsPDF, exportAllReceiptsExcel } from '../services/exportService';
 import { dispatchDataChangedEvent } from '../services/lib/events';
 
 const ReceiptForm: React.FC<{ language: Language, onReceiptCreated: () => void }> = ({ language, onReceiptCreated }) => {

@@ -1,19 +1,23 @@
+
 import type { Admin, Receipt, Language, ExpenseItem } from '../types';
-import { translations } from '../constants';
+import { translations } from './lib/constants';
 import { getAdmin } from './db';
 import { NotoSansGujarati } from '../assets/NotoSansGujarati';
 import { NotoSansDevanagari } from '../assets/NotoSansDevanagari';
+
 
 // These are globals from the CDN script
 declare const jspdf: any;
 declare const XLSX: any;
 
 const initializeDocWithFonts = (doc: any, language: Language) => {
-    if (language === 'gu') {
+    // To embed fonts, their base64 representation must be available in the imported asset files.
+    // If the asset files are empty, jsPDF will fall back to standard fonts, and characters may not render correctly.
+    if (language === 'gu' && NotoSansGujarati) {
         doc.addFileToVFS('NotoSansGujarati-Regular.ttf', NotoSansGujarati);
         doc.addFont('NotoSansGujarati-Regular.ttf', 'NotoSansGujarati', 'normal');
         doc.setFont('NotoSansGujarati');
-    } else if (language === 'hi') {
+    } else if (language === 'hi' && NotoSansDevanagari) {
         doc.addFileToVFS('NotoSansDevanagari-Regular.ttf', NotoSansDevanagari);
         doc.addFont('NotoSansDevanagari-Regular.ttf', 'NotoSansDevanagari', 'normal');
         doc.setFont('NotoSansDevanagari');
@@ -41,10 +45,36 @@ const drawHeader = (doc: any, admin: Admin | undefined) => {
     doc.line(0, headerHeight, pageWidth, headerHeight);
 };
 
+const optimizeSignature = async (signatureDataUrl: string, quality = 0.75): Promise<string> => {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const maxWidth = 200; // Resize for a smaller footprint
+            const scale = maxWidth / img.width;
+            canvas.width = maxWidth;
+            canvas.height = img.height * scale;
+
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                // Use JPEG for better compression of signature images
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            } else {
+                resolve(signatureDataUrl); // Fallback to original if canvas fails
+            }
+        };
+        img.onerror = () => {
+            resolve(signatureDataUrl); // Fallback if image fails to load
+        };
+        img.src = signatureDataUrl;
+    });
+};
+
 
 export async function generateReceiptPDF(receipt: Receipt, language: Language) {
     const { jsPDF } = jspdf;
-    const doc = new jsPDF();
+    const doc = new jsPDF({ compress: true });
     const admin = await getAdmin();
     const t = translations[language];
 
@@ -93,12 +123,17 @@ export async function generateReceiptPDF(receipt: Receipt, language: Language) {
     
     // Signature
     if (admin?.signature) {
-        doc.addImage(admin.signature, 'PNG', 150, finalY, 40, 20);
+        const optimizedSignature = await optimizeSignature(admin.signature);
+        doc.addImage(optimizedSignature, 'JPEG', 150, finalY, 40, 20);
         doc.setDrawColor(117, 117, 117);
         doc.line(150, finalY + 22, 190, finalY + 22);
         doc.setFontSize(9);
         doc.setTextColor(117, 117, 117);
+        // Set font back to Helvetica for signature name to avoid issues if a name contains non-Gujarati chars
+        doc.setFont('Helvetica');
         doc.text(admin.name, 170, finalY + 27, { align: 'center' });
+        // Switch back to language-specific font for the label
+        initializeDocWithFonts(doc, language);
         doc.text(language === 'en' ? 'Authorized Signature' : (language === 'gu' ? 'અધિકૃત સહી' : 'अधिकृत हस्ताक्षर'), 170, finalY + 31, { align: 'center' });
     }
     
@@ -116,7 +151,7 @@ export async function generateReceiptPDF(receipt: Receipt, language: Language) {
 
 export async function exportAllReceiptsPDF(receipts: Receipt[], language: Language) {
     const { jsPDF } = jspdf;
-    const doc = new jsPDF();
+    const doc = new jsPDF({ compress: true });
     const admin = await getAdmin();
     const t = translations[language];
 
@@ -162,7 +197,7 @@ export function exportAllReceiptsExcel(receipts: Receipt[], language: Language) 
 
 export async function generateExpensePDF(items: ExpenseItem[], total: number, language: Language) {
     const { jsPDF } = jspdf;
-    const doc = new jsPDF();
+    const doc = new jsPDF({ compress: true });
     const admin = await getAdmin();
     const t = translations[language];
 
